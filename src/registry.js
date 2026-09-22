@@ -48,16 +48,16 @@ export const registry = {
 
   socials: {
     x: {
-      status: "absent",
-      url: null,
+      status: "stated",
+      url: "https://x.com/dolphinbra1n",
       asOf: "2026-09-22",
-      source: "official X account not yet created / announced",
+      source: "client confirmed",
     },
     github: {
-      status: "absent",
-      url: null,
+      status: "stated",
+      url: "https://github.com/Dolphinbra1n/dolphinbrain-protocol",
       asOf: "2026-09-22",
-      source: "official GitHub org/repo not yet created / announced",
+      source: "client confirmed",
     },
   },
 
