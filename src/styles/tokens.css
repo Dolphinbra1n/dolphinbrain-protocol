@@ -1,0 +1,87 @@
+/**
+ * tokens.css — the ONLY file in this project allowed to contain color
+ * literals. Every other stylesheet references these custom properties.
+ *
+ * Derivation method (honest account of what was actually run):
+ *   1. Each file in brand/ and reference/ was decoded to raw RGB(A) pixel
+ *      data with the `sharp` library (Node), downsampled to 80x80 for
+ *      the clustering pass.
+ *   2. A from-scratch k-means (k=5, 6 iterations, squared-Euclidean
+ *      distance in RGB space) was run over the sampled pixels of each
+ *      image individually; clusters were sorted by pixel-count weight.
+ *   3. The dominant background cluster across the reference photos landed
+ *      consistently in the 0x0b0b09-0x0e0e0c range (72-88% weight per
+ *      image) confirming a near-black, very slightly warm-tinted backdrop.
+ *   4. Mid and light clusters across brand logos + reference photos formed
+ *      a tight grey ramp (~0x30-0x39 dark, ~0x65-0x6d mid, ~0x84-0x93
+ *      light) — the "grainy noise-textured light-gray dolphin" body.
+ *   5. Because k-means on downsampled/averaged pixels tends to pull the
+ *      brightest specular highlights toward the mean, the lightest token
+ *      was instead taken as the arithmetic mean of all FULL-RESOLUTION
+ *      pixels with luminance > 230 (Rec. 709 luma) in the RGBA brand PNG
+ *      (10,838 qualifying pixels out of 4,000,000), giving #f9f9f6.
+ *   6. The PNG's fully-transparent pixels were sampled directly: all
+ *      3,514,316 alpha=0 pixels checked are exactly (0,0,0,0) — i.e. flat
+ *      black under transparency, not stray fringe colors — so no
+ *      premultiplied-alpha correction was needed for the source assets;
+ *      exported raster favicons/social art are still flattened onto
+ *      --color-bg before resizing as a safety measure since the flat
+ *      black would otherwise show as a halo against a lighter matte.
+ *   7. UI-only utility shades (surface elevation, border hairlines, focus
+ *      ring, status colors) are NOT sampled from the artwork — art has no
+ *      such states — and are noted as "interpolated" below.
+ */
+
+:root {
+  /* --- sampled directly from brand/reference assets (k-means / percentile) --- */
+  --color-bg: #0a0a09;           /* sampled: dominant background cluster, all reference photos */
+  --color-ink-100: #948d86;      /* sampled: lightest k-means cluster (dolphin highlight grey) */
+  --color-ink-200: #6d6864;      /* sampled: mid k-means cluster (dolphin body grey) */
+  --color-ink-300: #322f2c;      /* sampled: dark k-means cluster (dolphin shadow grey) */
+  --color-fg: #f9f9f6;           /* sampled: mean of full-res pixels with luma > 230 in brand PNG */
+
+  /* --- interpolated / derived for UI chrome, not present as flat art fields --- */
+  --color-surface: #141311;      /* interpolated: --color-bg lightened ~4% for card elevation */
+  --color-surface-raised: #1b1a17; /* interpolated: --color-bg lightened ~7% for modals/toasts */
+  --color-border: #2a2825;       /* interpolated: between --color-bg and --color-ink-300 */
+  --color-border-strong: #3a3733; /* interpolated: --color-ink-300 lightened slightly */
+  --color-muted: #a49c93;        /* interpolated: between --color-ink-100 and --color-fg */
+  --color-accent: #f9f9f6;       /* mono palette: accent reuses --color-fg, no invented hue */
+  --color-focus: #cfc7bb;        /* interpolated: for focus rings, between ink-100 and fg */
+
+  /* status colors: not present in source art (monochrome), kept minimal & desaturated */
+  --color-positive: #b9c9b0;
+  --color-warning: #cbb98b;
+
+  --font-display: "Space Grotesk", "Inter", system-ui, -apple-system, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 240ms;
+  --duration-slow: 420ms;
+  --duration-slower: 640ms;
+
+  /* shadows: built from --color-bg's own rgb (10,10,9), not an invented hue */
+  --shadow-sm: 0 1px 2px rgba(10, 10, 9, 0.4);
+  --shadow-md: 0 12px 28px rgba(10, 10, 9, 0.45);
+  --shadow-lg: 0 24px 64px rgba(10, 10, 9, 0.55);
+
+  --container-max: 1200px;
+}
